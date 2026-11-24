@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Speech API Test</title>
+</head>
+<body>
+  <h1>SpeechRecognition API Test</h1>
+  <button id="btn">Start recognition</button>
+  <p id="status">Status: waiting</p>
+  <p id="result"></p>
+
+  <script>
+    const status = document.getElementById('status');
+    const result = document.getElementById('result');
+    const btn = document.getElementById('btn');
+
+    let SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!SpeechRec) {
+      status.textContent = "SpeechRecognition NOT supported";
+      status.style.color = "red";
+      btn.disabled = true;
+    } else {
+      status.textContent = "SpeechRecognition IS supported ✓";
+      status.style.color = "green";
+
+      const rec = new SpeechRec();
+      rec.lang = 'en-US';
+      rec.interimResults = false;
+
+      btn.onclick = () => {
+        status.textContent = "Listening...";
+        rec.start();
+      };
+
+      rec.onresult = e => {
+        const text = e.results[0][0].transcript;
+        result.textContent = "Recognized: " + text;
+        status.textContent = "Done";
+      };
+
+      rec.onerror = e => {
+        status.textContent = "Error: " + e.error;
+        console.error(e);
+      };
+
+      rec.onend = () => {
+        status.textContent = "Recognition ended";
+      };
+    }
+  </script>
+</body>
+</html>

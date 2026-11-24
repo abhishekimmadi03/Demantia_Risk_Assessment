@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroCheck AI · User Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: #0f212e;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: #e5f0f5;
+        }
+
+        /* ========== HORIZONTAL NAVBAR (user version) ========== */
+        .navbar {
+            background: rgba(10, 30, 40, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid #2a5f6e;
+            padding: 0 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 10px 20px -10px #00000080;
+            flex-wrap: wrap;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px 0;
+        }
+
+        .brand-icon {
+            background: linear-gradient(145deg, #2f6b7a, #1d4b55);
+            width: 45px;
+            height: 45px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #d4af37;
+        }
+        .brand-icon i {
+            font-size: 2rem;
+            color: #ffeaa5;
+        }
+        .navbar-brand h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #f0e6c5;
+        }
+        .navbar-brand span {
+            font-size: 0.75rem;
+            color: #b0cedc;
+            display: block;
+        }
+
+        /* horizontal nav links */
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            flex-wrap: wrap;
+            padding: 10px 0;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 18px;
+            color: #c4dee8;
+            text-decoration: none;
+            font-weight: 500;
+            border-radius: 40px;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+        .nav-item i {
+            font-size: 1.2rem;
+            color: #d4af37;
+            width: 22px;
+        }
+        .nav-item:hover {
+            background: #1a4050;
+            color: white;
+        }
+        .nav-item.active {
+            background: #1a4a5a;
+            color: white;
+            border-bottom: 2px solid #f1c40f;
+            border-radius: 40px 40px 0 0;
+        }
+
+        .logout-item {
+            background: #2a4d5a;
+            margin-left: 10px;
+        }
+        .logout-item:hover {
+            background: #7a4a4a;
+        }
+
+        /* ========== MAIN DASHBOARD CONTENT ========== */
+        .main-content {
+            padding: 30px 35px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .page-header h1 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            background: linear-gradient(145deg, #f5e6b8, #ffe3a4);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-badge {
+            background: #1d4b55;
+            padding: 12px 25px;
+            border-radius: 40px;
+            border: 1px solid #d4af37;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* stats cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 22px;
+            margin-bottom: 40px;
+        }
+        .stat-card {
+            background: rgba(25, 45, 55, 0.7);
+            backdrop-filter: blur(6px);
+            border: 1px solid #3d7382;
+            border-radius: 28px;
+            padding: 25px 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: 0.2s;
+        }
+        .stat-card:hover {
+            border-color: #d4af37;
+            transform: translateY(-5px);
+        }
+        .stat-icon {
+            font-size: 2.8rem;
+            color: #d4af37;
+        }
+        .stat-info h3 {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        .stat-info p {
+            color: #b8d6e5;
+        }
+
+        /* assessment progress cards */
+        .section-title {
+            font-size: 1.8rem;
+            margin: 40px 0 20px;
+            color: #ffe3a4;
+            border-left: 6px solid #d4af37;
+            padding-left: 20px;
+        }
+
+        .assessment-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .assessment-card {
+            background: rgba(25, 45, 55, 0.7);
+            backdrop-filter: blur(6px);
+            border: 1px solid #3d7382;
+            border-radius: 28px;
+            padding: 30px;
+            transition: 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        .assessment-card:hover {
+            border-color: #d4af37;
+            transform: translateY(-5px);
+        }
+        .assessment-card .card-icon {
+            font-size: 2.5rem;
+            color: #d4af37;
+            margin-bottom: 20px;
+        }
+        .assessment-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+        }
+        .assessment-card p {
+            color: #b8d6e5;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #2a4d5a;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #d4af37, #f1c40f);
+            border-radius: 10px;
+            width: 0%;
+        }
+        .btn-attempt {
+            background: transparent;
+            border: 2px solid #d4af37;
+            color: #d4af37;
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            width: 100%;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .btn-attempt:hover {
+            background: #d4af37;
+            color: #0f212e;
+        }
+
+        /* risk report section */
+        .report-card {
+            background: linear-gradient(145deg, #1d4050, #15303d);
+            border: 1px solid #d4af37;
+            border-radius: 32px;
+            padding: 35px;
+            margin: 40px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+        .report-info h3 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            color: #ffe3a4;
+        }
+        .report-info p {
+            color: #b8d6e5;
+            max-width: 600px;
+        }
+        .risk-score {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: #d4af37;
+            text-align: center;
+        }
+        .risk-label {
+            color: #b8d6e5;
+        }
+        .btn-report {
+            background: #d4af37;
+            border: none;
+            color: #0f212e;
+            padding: 15px 35px;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .btn-report:hover {
+            background: #f1c40f;
+            transform: scale(1.05);
+        }
+        .btn-report.secondary {
+            background: transparent;
+            border: 2px solid #d4af37;
+            color: #d4af37;
+        }
+        .btn-report.secondary:hover {
+            background: #d4af37;
+            color: #0f212e;
+        }
+
+        /* recent activity */
+        .activity-table {
+            background: rgba(25, 45, 55, 0.7);
+            backdrop-filter: blur(6px);
+            border: 1px solid #3d7382;
+            border-radius: 32px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+        .activity-table h3 {
+            color: #ffe3a4;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            text-align: left;
+            padding: 16px 10px;
+            color: #d4af37;
+            border-bottom: 2px solid #3d7382;
+        }
+        td {
+            padding: 14px 10px;
+            border-bottom: 1px solid #2a4d5a;
+        }
+
+        /* responsiveness */
+        @media (max-width: 1100px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .assessment-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 900px) {
+            .navbar { flex-direction: column; align-items: flex-start; }
+            .nav-links { width: 100%; overflow-x: auto; padding-bottom: 10px; }
+            .report-card { flex-direction: column; text-align: center; }
+        }
+        @media (max-width: 600px) {
+            .stats-grid { grid-template-columns: 1fr; }
+            .assessment-grid { grid-template-columns: 1fr; }
+            .main-content { padding: 20px 15px; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <div class="brand-icon">
+                <i class="fas fa-clipboard-list"></i>
+            </div>
+            <div>
+                <h2>ScreeningSystem AI</h2>
+                <span>user dashboard</span>
+            </div>
+        </div>
+    
+        <div class="nav-links">
+            <a href="{% url 'user_dashboard' %}" class="nav-item active">
+                <i class="fas fa-chart-pie"></i> Dashboard
+            </a>
+            <a href="{% url 'attempt_test' %}" class="nav-item">
+                <i class="fas fa-brain"></i> Word Recall
+            </a>
+            <a href="/number_memory_test" class="nav-item">
+                <i class="fas fa-sort-numeric-up-alt"></i> Number Sequencing
+            </a>
+            <a href="/attempt_fluency" class="nav-item">
+                <i class="fas fa-microphone-alt"></i> Verbal Fluency
+            </a>
+            <a href="/all_scores" class="nav-item">
+                <i class="fas fa-file-medical-alt"></i> Risk Report
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-download"></i> Download
+            </a>
+            <a href="/user_profile" class="nav-item">
+                <i class="fas fa-id-card"></i> Profile
+            </a>
+            <form action="{% url 'user_logout' %}" method="POST" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="nav-item logout-item" style="background: none; border: none; cursor: pointer;">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </form>
+        </div>
+    </nav>
+    <!-- ========== MAIN DASHBOARD CONTENT ========== -->
+    <main class="main-content">
+        <div class="page-header">
+            <h1><i class="fas fa-user-circle"></i> Welcome back, Alex</h1>
+            <div class="user-badge">
+                <i class="fas fa-calendar-alt"></i> Last assessment: 3 days ago
+            </div>
+        </div>
+
+        <!-- stats cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <i class="fas fa-check-circle stat-icon"></i>
+                <div class="stat-info">
+                    <h3>3/3</h3>
+                    <p>assessments done</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-chart-line stat-icon"></i>
+                <div class="stat-info">
+                    <h3>82%</h3>
+                    <p>avg. performance</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-exclamation-triangle stat-icon"></i>
+                <div class="stat-info">
+                    <h3>Low</h3>
+                    <p>risk level</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-file-pdf stat-icon"></i>
+                <div class="stat-info">
+                    <h3>2</h3>
+                    <p>reports ready</p>
+                </div>
+            </div>
+        </div>
+        <h1>Welcome to your Dashboard</h1>
+        <p>Your most recent score is: {{ score }} / 20</p>
+        <!-- assessment cards (attempt links) -->
+        <h2 class="section-title"><i class="fas fa-tasks"></i> Your assessments</h2>
+        <div class="assessment-grid">
+            <!-- Word Recall Card -->
+            <div class="assessment-card">
+                <div class="card-icon"><i class="fas fa-brain"></i></div>
+                <h3>Word Recall Memory</h3>
+                <p>Test your verbal memory with word lists</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 100%;"></div>
+                </div>
+                <p style="font-size: 0.9rem;">Completed · 8/10 score</p>
+                <button class="btn-attempt"><i class="fas fa-redo-alt"></i> Retry assessment</button>
+            </div>
+            <!-- Number Sequencing Card -->
+            <div class="assessment-card">
+                <div class="card-icon"><i class="fas fa-sort-numeric-up-alt"></i></div>
+                <h3>Number Sequencing</h3>
+                <p>Attention and working memory task</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%;"></div>
+                </div>
+                <p style="font-size: 0.9rem;">Not started</p>
+                <button class="btn-attempt"><i class="fas fa-play"></i> Start attempt</button>
+            </div>
+            <!-- Verbal Fluency Card -->
+            <div class="assessment-card">
+                <div class="card-icon"><i class="fas fa-microphone-alt"></i></div>
+                <h3>Verbal Fluency</h3>
+                <p>Speech-based category fluency</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%;"></div>
+                </div>
+                <p style="font-size: 0.9rem;">Not started</p>
+                <button class="btn-attempt"><i class="fas fa-play"></i> Start attempt</button>
+            </div>
+        </div>
+
+        <!-- Risk Evaluation and Report Section (view & download) -->
+        <div class="report-card">
+            <div class="report-info">
+                <h3><i class="fas fa-file-medical-alt"></i> Automated Risk Evaluation</h3>
+                <p>Your latest cognitive assessment indicates a low risk profile. Detailed report includes percentile rankings and longitudinal trends.</p>
+                <div style="display: flex; gap: 15px; margin-top: 25px; flex-wrap: wrap;">
+                    <button class="btn-report"><i class="fas fa-eye"></i> View full report</button>
+                    <button class="btn-report secondary"><i class="fas fa-download"></i> Download PDF</button>
+                </div>
+            </div>
+            <div class="risk-score">
+                12% <span class="risk-label">risk</span>
+            </div>
+        </div>
+
+        <!-- recent activity (optional but nice) -->
+        <div class="activity-table">
+            <h3><i class="fas fa-history"></i> Recent assessment history</h3>
+            <table>
+                <thead>
+                    <tr><th>Date</th><th>Assessment</th><th>Score</th><th>Report</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>2025-03-04</td><td>Word Recall</td><td>8/10</td><td><i class="fas fa-download" style="color: #d4af37;"></i> <a href="#" style="color: #d4af37;">Download</a></td></tr>
+                    <tr><td>2025-02-28</td><td>Word Recall</td><td>7/10</td><td><i class="fas fa-file-pdf" style="color: #d4af37;"></i> <a href="#" style="color: #d4af37;">PDF</a></td></tr>
+                    <tr><td>2025-02-15</td><td>Number Sequencing</td><td>6/10</td><td>—</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+</body>
+</html>

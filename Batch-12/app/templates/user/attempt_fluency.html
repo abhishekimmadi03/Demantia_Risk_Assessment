@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroCheck AI · User Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: #0f212e;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: #e5f0f5;
+        }
+
+        .navbar {
+            background: rgba(10, 30, 40, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid #2a5f6e;
+            padding: 0 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 10px 20px -10px #00000080;
+            flex-wrap: wrap;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px 0;
+        }
+
+        .brand-icon {
+            background: linear-gradient(145deg, #2f6b7a, #1d4b55);
+            width: 45px;
+            height: 45px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #d4af37;
+        }
+
+        .brand-icon i {
+            font-size: 2rem;
+            color: #ffeaa5;
+        }
+
+        .navbar-brand h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #f0e6c5;
+        }
+
+        .navbar-brand span {
+            font-size: 0.75rem;
+            color: #b0cedc;
+            display: block;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            flex-wrap: wrap;
+            padding: 10px 0;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 18px;
+            color: #c4dee8;
+            text-decoration: none;
+            font-weight: 500;
+            border-radius: 40px;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+
+        .nav-item i {
+            font-size: 1.2rem;
+            color: #d4af37;
+            width: 22px;
+        }
+
+        .nav-item:hover {
+            background: #1a4050;
+            color: white;
+        }
+
+        .nav-item.active {
+            background: #1a4a5a;
+            color: white;
+            border-bottom: 2px solid #f1c40f;
+            border-radius: 40px 40px 0 0;
+        }
+
+        .logout-item {
+            background: #2a4d5a;
+            margin-left: 10px;
+        }
+
+        .logout-item:hover {
+            background: #7a4a4a;
+        }
+
+        .main-content {
+            padding: 30px 35px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .page-header h1 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            background: linear-gradient(145deg, #f5e6b8, #ffe3a4);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-badge {
+            background: #1d4b55;
+            padding: 12px 25px;
+            border-radius: 40px;
+            border: 1px solid #d4af37;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+
+        .test-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .test-header h1 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            background: linear-gradient(145deg, #f5e6b8, #ffe3a4);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* ----- TEST CARD (recall style adapted) ----- */
+        .test-card {
+            background: rgba(25, 45, 55, 0.8);
+            backdrop-filter: blur(6px);
+            border: 1px solid #3d7382;
+            border-radius: 42px;
+            padding: 35px 35px 45px;
+            margin-top: 15px;
+            box-shadow: 0 25px 40px -15px black;
+        }
+
+        /* image container */
+        .image-stage {
+            background: #15303d;
+            border-radius: 36px;
+            padding: 30px;
+            border: 1px solid #5b8c9c;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .image-stage h2 {
+            color: #ffe3a4;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        #fluency-image {
+            max-width: 100%;
+            max-height: 320px;
+            border-radius: 30px;
+            box-shadow: 0 12px 25px -8px black;
+            border: 2px solid #d4af37;
+            transition: opacity 0.4s;
+        }
+
+        .hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* phase & timer */
+        .phase-panel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px 0 30px;
+        }
+
+        .study-phase {
+            background: #1f4e5e;
+            padding: 16px 32px;
+            border-radius: 60px;
+            font-size: 1.4rem;
+            border: 2px solid #d4af37;
+            box-shadow: 0 8px 0 #0a262f;
+            color: #f9e7b3;
+            margin-bottom: 20px;
+            text-align: center;
+            width: fit-content;
+        }
+
+        .timer {
+            font-size: 5rem;
+            font-weight: 800;
+            font-family: monospace;
+            background: #1d3e4b;
+            color: #f1c40f;
+            padding: 10px 50px;
+            border-radius: 100px;
+            display: inline-block;
+            border: 2px solid #d4af37;
+            box-shadow: 0 0 20px #d4af3766;
+            margin: 5px 0 15px;
+            line-height: 1.2;
+        }
+
+        .permission-status {
+            background: #2d4e5a;
+            border-radius: 40px;
+            padding: 15px 25px;
+            font-size: 1.1rem;
+            border-left: 6px solid #f1c40f;
+            margin: 15px 0;
+        }
+
+        /* microhpone area */
+        .speech-area {
+            background: #1a3e4b;
+            border-radius: 36px;
+            padding: 30px;
+            border: 2px solid #d4af37;
+            margin-top: 20px;
+        }
+
+        .speech-area h2 {
+            font-size: 1.8rem;
+            color: #ffe3a4;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 20px;
+            margin: 30px 0 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background: #d4af37;
+            border: none;
+            color: #0f212e;
+            padding: 16px 38px;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            border: 2px solid #d4af37;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #f1c40f;
+            transform: scale(1.02);
+            border-color: #f1c40f;
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            background: #7f8c8d;
+            border-color: #5a6b70;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #d4af37;
+            color: #d4af37;
+            padding: 16px 38px;
+            border-radius: 60px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 1.2rem;
+        }
+
+        .btn-outline:hover {
+            background: #d4af37;
+            color: #0f212e;
+        }
+
+        #output {
+            background: #0f2933;
+            border-radius: 30px;
+            padding: 20px 25px;
+            font-size: 1.2rem;
+            border: 1px solid #3d7382;
+            color: #b8e2f0;
+            white-space: pre-line;
+            margin: 20px 0;
+        }
+
+        .result-badge {
+            background: #1e5555;
+            border-radius: 60px;
+            padding: 14px 32px;
+            font-weight: 700;
+            font-size: 1.4rem;
+            border: 2px solid gold;
+            display: inline-block;
+        }
+
+        .result-badge.pass {
+            background: #1d6b4a;
+            border-color: #2ecc71;
+        }
+
+        .result-badge.fail {
+            background: #6b3f3f;
+            border-color: #e67e22;
+        }
+
+        .info-note {
+            margin-top: 30px;
+            padding: 15px;
+            border-top: 1px dashed #3d7382;
+            color: #a5c6d3;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+
+        #submit-results {
+            margin-top: 20px;
+            background: #2b5f6b;
+            border: 2px solid #d4af37;
+            color: white;
+            padding: 14px 32px;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        #submit-results:disabled {
+            opacity: 0.4;
+            background: #3f535a;
+            border-color: #7f8c8d;
+            cursor: not-allowed;
+        }
+
+        #submit-results:hover:not(:disabled) {
+            background: #1f8b9c;
+        }
+
+        /* responsiveness */
+        @media (max-width: 700px) {
+            .main-content {
+                padding: 20px 15px;
+            }
+
+            #timer {
+                font-size: 4rem;
+            }
+        }
+
+        /* responsiveness */
+        @media (max-width: 1100px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .assessment-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 900px) {
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .nav-links {
+                width: 100%;
+                overflow-x: auto;
+                padding-bottom: 10px;
+            }
+
+            .report-card {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .assessment-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .main-content {
+                padding: 20px 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- NAVBAR exactly as in dashboard (active=verbal fluency) -->
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <div class="brand-icon">
+                <i class="fas fa-clipboard-list"></i>
+            </div>
+            <div>
+                <h2>ScreeningSystem AI</h2>
+                <span>user dashboard</span>
+            </div>
+        </div>
+
+        <div class="nav-links">
+            <a href="{% url 'user_dashboard' %}" class="nav-item">
+                <i class="fas fa-chart-pie"></i> Dashboard
+            </a>
+            <a href="{% url 'attempt_test' %}" class="nav-item">
+                <i class="fas fa-brain"></i> Word Recall
+            </a>
+            <a href="/number_memory_test" class="nav-item">
+                <i class="fas fa-sort-numeric-up-alt"></i> Number Sequencing
+            </a>
+            <a href="/attempt_fluency" class="nav-item active">
+                <i class="fas fa-microphone-alt"></i> Verbal Fluency
+            </a>
+            <a href="/all_scores" class="nav-item">
+                <i class="fas fa-file-medical-alt"></i> Risk Report
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-download"></i> Download
+            </a>
+            <a href="/user_profile" class="nav-item">
+                <i class="fas fa-id-card"></i> Profile
+            </a>
+            <form action="{% url 'user_logout' %}" method="POST" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="nav-item logout-item"
+                    style="background: none; border: none; cursor: pointer;">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </form>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <!-- header with user greeting (mimics dashboard style) -->
+        <div class="page-header">
+            <h1><i class="fas fa-microphone-alt" style="color: #d4af37;"></i> Verbal Fluency · Picture Naming</h1>
+            <div class="user-badge">
+                <i class="fas fa-user-circle"></i> Sarah Chen (ID: 44-829)
+            </div>
+        </div>
+
+        <!-- main test card -->
+        <div class="test-card">
+            <!-- image container with study message -->
+            <div class="image-stage">
+                <h2><i class="fas fa-image"></i> Study the picture</h2>
+                {% if image_url %}
+                <img src="{{ image_url }}" alt="Objects to name" id="fluency-image">
+                {% else %}
+                <div
+                    style="background: #0f2c36; border-radius: 36px; padding: 50px; border: 2px dashed #d4af37; color: #c4dbe4;">
+                    <i class="fas fa-paint-brush" style="font-size: 4rem;"></i>
+                    <p style="margin-top: 15px;">[ Demo mode ] Sample image: household objects</p>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Study phase and timer panel -->
+            <div class="phase-panel">
+                <div id="study-message" class="study-phase">
+                    <i class="fas fa-hourglass-half"></i> Study Phase: 20 seconds — memorize objects
+                </div>
+                <div id="timer-display" class="timer">⏱️ 20s</div>
+                <div id="phase-message" style="font-size:1.3rem; color: #c7e9f0;">Image visible during study</div>
+            </div>
+
+            <!-- speech area -->
+            <div class="speech-area">
+                <h2><i class="fas fa-ear-listen"></i> Speech recognition phase</h2>
+                <p style="margin-bottom: 20px; font-size: 1.1rem;">🎙️ After the study, name all objects you remember.
+                    Speak clearly.</p>
+
+                <div id="permission-message" class="permission-status" style="display: none;"></div>
+
+                <div class="button-group">
+                    <button id="start-recognition-btn" class="btn-primary" disabled>
+                        <i class="fas fa-microphone"></i> <span>Wait for study...</span>
+                    </button>
+                    <button id="restart-demo-btn" class="btn-outline" style="display: none;">⟲ Reset (demo)</button>
+                </div>
+
+                <!-- live output / result area -->
+                <div id="output">Please study the image for 20 seconds. The microphone will become available afterwards.
+                </div>
+
+                <!-- result badge (shown after completion) -->
+                <div id="result-badge" class="result-badge" style="display: none;"></div>
+
+                <!-- hidden form for submission -->
+                {{ tags|json_script:"tags-data" }}
+                <form method="POST" id="result-form" style="margin-top: 20px;">
+                    {% csrf_token %}
+                    <input type="hidden" name="test_image_id" value="{{ test_image.id }}">
+                    <input type="hidden" name="correct_answers" id="correct-answers">
+                    <input type="hidden" name="wrong_answers" id="wrong-answers">
+                    <button type="submit" id="submit-results" disabled>⬆️ Submit Results</button>
+                </form>
+            </div>
+
+            <div class="info-note">
+                <i class="fas fa-info-circle"></i> Best in Chrome/Edge. Make sure microphone is enabled.
+            </div>
+        </div>
+    </main>
+
+    <script>
+        (function () {
+            'use strict';
+
+            // --- DOM elements ---
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const startBtn = document.getElementById('start-recognition-btn');
+            const output = document.getElementById('output');
+            const permissionMsg = document.getElementById('permission-message');
+            const fluencyImage = document.getElementById('fluency-image');
+            const studyMessage = document.getElementById('study-message');
+            const timerDisplay = document.getElementById('timer-display');
+            const phaseMessage = document.getElementById('phase-message');
+            const resultBadge = document.getElementById('result-badge');
+            const resultForm = document.getElementById('result-form');
+            const correctInput = document.getElementById('correct-answers');
+            const wrongInput = document.getElementById('wrong-answers');
+            const submitBtn = document.getElementById('submit-results');
+            const restartDemoBtn = document.getElementById('restart-demo-btn');
+
+            // --- State ---
+            let testCompleted = false;
+            let expectedObjects = [];
+            let recognition = null;
+            let studyFinished = false;    // becomes true after 20s
+            let timerInterval = null;
+            let studyTimeout = null;
+
+            // Load expected tags
+            try {
+                const tagsElement = document.getElementById('tags-data');
+                if (tagsElement) {
+                    expectedObjects = JSON.parse(tagsElement.textContent) || [];
+                    console.log('Expected objects:', expectedObjects);
+                } else {
+                    // fallback for demo
+                    expectedObjects = ['cup', 'book', 'watch', 'apple'];
+                }
+            } catch (err) {
+                console.error('Failed to parse tags, using defaults:', err);
+                expectedObjects = ['cup', 'book', 'watch', 'apple'];
+            }
+
+            // --- Helper: reset UI for demo/restart (for presentation, not full backend reset)
+            function softReset() {
+                if (studyTimeout) clearTimeout(studyTimeout);
+                if (timerInterval) clearInterval(timerInterval);
+                testCompleted = false;
+                studyFinished = false;
+
+                // show image again
+                if (fluencyImage) fluencyImage.classList.remove('hidden');
+
+                studyMessage.innerHTML = '<i class="fas fa-hourglass-half"></i> Study Phase: 20 seconds — memorize objects';
+                studyMessage.style.background = '#1f4e5e';
+                phaseMessage.textContent = 'Image visible during study';
+                timerDisplay.textContent = '⏱️ 20s';
+                output.textContent = 'Study phase started. Please memorize the objects.';
+
+                startBtn.disabled = true;
+                startBtn.innerHTML = '<i class="fas fa-microphone"></i> <span>Wait for study...</span>';
+
+                resultBadge.style.display = 'none';
+                submitBtn.disabled = true;
+                permissionMsg.style.display = 'none';
+                permissionMsg.textContent = '';
+
+                // start study phase again
+                startStudyPhase();
+            }
+
+            // --- Microphone permission helper ---
+            async function checkMicrophonePermission() {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    stream.getTracks().forEach(t => t.stop());
+                    permissionMsg.style.display = 'none';
+                    return true;
+                } catch (err) {
+                    permissionMsg.style.display = 'block';
+                    permissionMsg.textContent = err.name === 'NotAllowedError'
+                        ? '⚠️ Microphone access denied. Please allow it and refresh.'
+                        : '⚠️ Microphone error: ' + err.message;
+                    return false;
+                }
+            }
+
+            // --- Initialize recognition if supported ---
+            function initRecognition() {
+                if (!SpeechRecognition) {
+                    output.textContent = "❌ Speech recognition not supported. Please use Chrome/Edge.";
+                    return null;
+                }
+                const rec = new SpeechRecognition();
+                rec.continuous = false;
+                rec.interimResults = false;
+                rec.lang = 'en-US';
+                rec.maxAlternatives = 1;
+                return rec;
+            }
+
+            // --- Start speech recognition (called after study & click) ---
+            async function startSpeechRecognition() {
+                if (testCompleted || !studyFinished) return;
+
+                const hasPermission = await checkMicrophonePermission();
+                if (!hasPermission) {
+                    startBtn.disabled = false;
+                    startBtn.innerHTML = '<i class="fas fa-microphone"></i> Try again';
+                    return;
+                }
+
+                // fresh recognition each time
+                recognition = initRecognition();
+                if (!recognition) return;
+
+                startBtn.disabled = true;
+                startBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Listening...';
+                output.textContent = '🎤 Listening... Name as many objects as you remember!';
+
+                // attach handlers
+                recognition.onstart = () => {
+                    output.textContent = '🎤 Listening now — speak clearly!';
+                };
+
+                recognition.onresult = (event) => {
+                    const spokenText = event.results[0][0].transcript.trim().toLowerCase();
+                    console.log('Recognized:', spokenText);
+
+                    const spokenWords = spokenText
+                        .split(/\s+/)
+                        .map(w => w.replace(/[^a-z]/g, ''))
+                        .filter(w => w.length > 0);
+
+                    let matched = new Set();
+                    spokenWords.forEach(word => {
+                        if (expectedObjects.includes(word)) {
+                            matched.add(word);
+                        }
+                    });
+
+                    const correctCount = matched.size;
+                    const totalSpoken = spokenWords.length;
+
+                    // Build nice feedback
+                    let message = `You said: "${spokenText}"\n\n`;
+                    message += `✅ Correct: ${correctCount} / ${expectedObjects.length}\n`;
+                    if (matched.size > 0) {
+                        message += `✔️ Matched: ${Array.from(matched).join(', ')}\n`;
+                    }
+                    const missing = expectedObjects.filter(o => !matched.has(o));
+                    if (missing.length > 0) {
+                        message += `❌ Missing: ${missing.join(', ')}\n`;
+                    }
+
+                    // Show result immediately
+                    output.textContent = message;
+                    resultBadge.textContent = `Score: ${correctCount} / ${expectedObjects.length}`;
+                    resultBadge.className = 'result-badge ' + (correctCount >= 1 ? 'pass' : 'fail');
+                    resultBadge.style.display = 'inline-block';
+
+                    // Fill form
+                    correctInput.value = correctCount;
+                    wrongInput.value = totalSpoken - correctCount;
+
+                    // AUTO-SUBMIT after short delay (best UX)
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = 'Saving…';
+                    setTimeout(() => {
+                        if (!testCompleted) {
+                            testCompleted = true;
+                            resultForm.submit();   // ← This triggers real POST
+                        }
+                    }, 1800);   // 1.8 seconds – long enough to read, short enough to feel instant
+                };
+
+                recognition.onerror = (event) => {
+                    let msg = 'Recognition error: ' + event.error;
+                    if (event.error === 'no-speech') msg = 'No speech detected. Click again and speak.';
+                    if (event.error === 'not-allowed') msg = 'Microphone permission denied.';
+                    output.textContent = '❌ ' + msg;
+
+                    startBtn.disabled = false;
+                    startBtn.innerHTML = '<i class="fas fa-microphone"></i> Start Speaking';
+                };
+
+                recognition.onend = () => {
+                    if (!testCompleted) {
+                        startBtn.disabled = false;
+                        startBtn.innerHTML = '<i class="fas fa-microphone"></i> Start Speaking';
+                    }
+                };
+
+                try {
+                    recognition.start();
+                } catch (err) {
+                    output.textContent = 'Error starting recognition: ' + err.message;
+                    startBtn.disabled = false;
+                    startBtn.innerHTML = '<i class="fas fa-microphone"></i> Start Speaking';
+                }
+            }
+
+            // --- Study phase countdown ---
+            function startStudyPhase() {
+                let timeLeft = 20;
+                timerDisplay.textContent = `⏱️ ${timeLeft}s`;
+
+                if (timerInterval) clearInterval(timerInterval);
+                timerInterval = setInterval(() => {
+                    timeLeft -= 1;
+                    timerDisplay.textContent = `⏱️ ${timeLeft}s`;
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        timerInterval = null;
+                    }
+                }, 1000);
+
+                studyTimeout = setTimeout(() => {
+                    // hide image softly
+                    if (fluencyImage) fluencyImage.classList.add('hidden');
+                    studyMessage.innerHTML = '<i class="fas fa-check-circle"></i> Study phase done! Now name the objects.';
+                    studyMessage.style.background = '#1d6b4a';
+                    phaseMessage.textContent = '🎤 Microphone ready — click "Start Speaking"';
+                    timerDisplay.textContent = ''; // clear timer
+
+                    studyFinished = true;
+
+                    if (!testCompleted) {
+                        startBtn.disabled = false;
+                        startBtn.innerHTML = '<i class="fas fa-microphone"></i> Start Speaking →';
+                        output.textContent = 'Click the button and name all objects from the picture.';
+                    }
+                }, 20000);
+            }
+
+            // --- Event listeners ---
+            window.addEventListener('load', () => {
+                // initial study phase
+                startStudyPhase();
+            });
+
+            startBtn.addEventListener('click', startSpeechRecognition);
+
+            // optional restart for demo (soft reset)
+            restartDemoBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                softReset();
+            });
+
+            // For demo, show the restart button (you can remove if not needed)
+            restartDemoBtn.style.display = 'inline-flex';
+
+            // If user tries to submit empty form, prevent
+            resultForm.addEventListener('submit', (e) => {
+                if (!correctInput.value) {
+                    e.preventDefault();
+                    alert('Please complete the test first.');
+                }
+            });
+
+            // Edge case: if recognition not supported, show message
+            if (!SpeechRecognition) {
+                output.textContent = '❌ Web Speech API not supported. Please use Google Chrome or Microsoft Edge.';
+                startBtn.disabled = true;
+            }
+        })();
+    </script>
+    <!-- small demo reset hint -->
+    <div style="text-align: center; margin-bottom: 20px; color: #b0cedc;">
+        <i class="fas fa-rotate-left"></i> The "Reset (demo)" button restarts the study phase for practice.
+    </div>
+</body>
+
+</html>

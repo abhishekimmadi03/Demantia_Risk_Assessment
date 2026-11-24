@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroCheck AI · Add User</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background: #0f212e;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: #e5f0f5;
+        }
+
+        /* ========== HORIZONTAL NAVBAR (identical to dashboard) ========== */
+        .navbar {
+            background: rgba(10, 30, 40, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid #2a5f6e;
+            padding: 0 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 10px 20px -10px #00000080;
+            flex-wrap: wrap;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px 0;
+        }
+
+        .brand-icon {
+            background: linear-gradient(145deg, #2f6b7a, #1d4b55);
+            width: 45px;
+            height: 45px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #d4af37;
+        }
+        .brand-icon i {
+            font-size: 2rem;
+            color: #ffeaa5;
+        }
+        .navbar-brand h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #f0e6c5;
+        }
+        .navbar-brand span {
+            font-size: 0.75rem;
+            color: #b0cedc;
+            display: block;
+        }
+
+        /* horizontal nav links */
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            flex-wrap: wrap;
+            padding: 10px 0;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 18px;
+            color: #c4dee8;
+            text-decoration: none;
+            font-weight: 500;
+            border-radius: 40px;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+        .nav-item i {
+            font-size: 1.2rem;
+            color: #d4af37;
+            width: 22px;
+        }
+        .nav-item:hover {
+            background: #1a4050;
+            color: white;
+        }
+        .nav-item.active {
+            background: #1a4a5a;
+            color: white;
+            border-bottom: 2px solid #f1c40f;
+            border-radius: 40px 40px 0 0;
+        }
+
+        .logout-item {
+            background: #2a4d5a;
+            margin-left: 10px;
+        }
+        .logout-item:hover {
+            background: #7a4a4a;
+        }
+
+        /* ========== MAIN CONTENT ========== */
+        .main-content {
+            padding: 40px 35px;
+            max-width: 1500px;
+            margin: 0 auto;
+            width: 100%;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+
+        /* ========== MAIN CONTENT (MANAGE USERS) ========== */
+        .dashboard-container {
+            padding: 30px 35px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .page-title {
+            font-size: 2.2rem;
+            font-weight: 600;
+            background: linear-gradient(145deg, #f5e6b8, #ffe3a4);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* search box */
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: rgba(25, 45, 55, 0.7);
+            backdrop-filter: blur(6px);
+            border: 1px solid #3d7382;
+            border-radius: 60px;
+            overflow: hidden;
+            width: 100%;
+            max-width: 400px;
+        }
+        .search-box input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 16px 22px;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+        }
+        .search-box input::placeholder {
+            color: #aac3cf;
+        }
+        .search-box button {
+            background: #1d4b55;
+            border: none;
+            padding: 16px 22px;
+            cursor: pointer;
+            color: #d4af37;
+            font-size: 1.2rem;
+            transition: 0.2s;
+        }
+        .search-box button:hover {
+            background: #2f6b7a;
+            color: #ffeaa5;
+        }
+
+        /* table container */
+        .table-container {
+            background: rgba(25, 45, 55, 0.7);
+            backdrop-filter: blur(6px);
+            border: 1px solid #3d7382;
+            border-radius: 32px;
+            padding: 25px;
+            overflow-x: auto;
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 20px 15px;
+            color: #d4af37;
+            font-weight: 600;
+            border-bottom: 2px solid #3d7382;
+            font-size: 1rem;
+        }
+        th i {
+            margin-left: 6px;
+            font-size: 0.9rem;
+            color: #5f9ea0;
+            cursor: pointer;
+        }
+
+        td {
+            padding: 18px 15px;
+            border-bottom: 1px solid #2a4d5a;
+            color: #e2f0f5;
+        }
+
+        /* user avatar - updated to match your design but with theme colors */
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #2f6b7a, #1d4b55);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #ffeaa5;
+            border: 2px solid #d4af37;
+        }
+
+        /* status badges */
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        .status-approved {
+            background: #2d5a4a;
+            color: #c3e6b5;
+            border: 1px solid #5f9ea0;
+        }
+        .status-blocked {
+            background: #7a4a4a;
+            color: #ffc9c9;
+            border: 1px solid #b54e4e;
+        }
+        .status-pending {
+            background: #9f8a4a;
+            color: #f8e6b5;
+            border: 1px solid #d4af37;
+        }
+
+        /* action buttons */
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 40px;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+            font-size: 0.9rem;
+        }
+        .btn-sm {
+            padding: 8px 14px;
+        }
+        .approve-btn {
+            background: #2d5a4a;
+            color: #c3e6b5;
+            border: 1px solid #5f9ea0;
+        }
+        .approve-btn:hover {
+            background: #3e7a64;
+            color: white;
+            border-color: #d4af37;
+        }
+        .block-btn {
+            background: #7a4a4a;
+            color: #ffc9c9;
+            border: 1px solid #b54e4e;
+        }
+        .block-btn:hover {
+            background: #9e5e5e;
+            color: white;
+            border-color: #d4af37;
+        }
+
+        /* pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        .pagination a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            background: rgba(25, 45, 55, 0.7);
+            backdrop-filter: blur(6px);
+            border: 1px solid #3d7382;
+            border-radius: 50%;
+            color: #d4af37;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+        .pagination a:hover {
+            background: #1a4a5a;
+            border-color: #f1c40f;
+            color: white;
+        }
+        .pagination a.active {
+            background: #d4af37;
+            border-color: #f1c40f;
+            color: #0f212e;
+            font-weight: bold;
+        }
+
+        /* responsiveness */
+        @media (max-width: 900px) {
+            .navbar { flex-direction: column; align-items: flex-start; }
+            .nav-links { width: 100%; overflow-x: auto; padding-bottom: 10px; }
+            .page-header { flex-direction: column; align-items: flex-start; }
+            .search-box { max-width: 100%; }
+        }
+        @media (max-width: 600px) {
+            .dashboard-container { padding: 20px 15px; }
+            .action-buttons { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ========== HORIZONTAL NAVBAR (exactly as in admin dashboard) ========== -->
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <div class="brand-icon">
+                <i class="fas fa-clipboard-list" style="font-size: 2.0rem; color: bisque;"></i>
+            </div>
+            <div>
+                <h2>ScreeningSystem AI</h2>
+                <span>admin dashboard</span>
+            </div>
+        </div>
+
+        <div class="nav-links">
+            <!-- Dashboard -->
+            <a href="/admin_dashboard" class="nav-item">
+                <i class="fas fa-chart-pie"></i> Dashboard
+            </a>
+            <!-- Add Users -->
+            <a href="/add_users" class="nav-item">
+                <i class="fas fa-user-plus"></i> Add Users
+            </a>
+            <!-- Manage Users (active) -->
+            <a href="/manage_user" class="nav-item active">
+                <i class="fas fa-user-friends"></i> Manage Users
+            </a>
+            <!-- Word Recall Memory Assessment -->
+            <a href="/word_recall" class="nav-item">
+                <i class="fas fa-brain"></i> Word Recall
+            </a>
+            <!-- Number Sequencing Attention Test -->
+            <a href="/number_memory_config" class="nav-item">
+                <i class="fas fa-sort-numeric-up-alt"></i> Number Sequencing
+            </a>
+            <!-- Speech Based Verbal Fluency Test -->
+            <a href="/verbal_fluency" class="nav-item">
+                <i class="fas fa-microphone-alt"></i> Verbal Fluency
+            </a>
+            <!-- Automated Risk Evaluation and Reporting -->
+            <a href="/test_scores" class="nav-item">
+                <i class="fas fa-file-medical-alt"></i> Risk & Reporting
+            </a>
+            <form action="{% url 'user_logout' %}" method="POST" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="nav-item logout-item" style="background: none; border: none; cursor: pointer;">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </form>
+        </div>
+    </nav>
+
+    <!-- ========== MANAGE USERS CONTENT (YOUR EXISTING LOGIC PRESERVED) ========== -->
+    <div class="dashboard-container">
+        <div class="page-header">
+            <h2 class="page-title">User List</h2>
+            <div class="search-box">
+                <input type="text" placeholder="Search users..." id="searchInput">
+                <button type="button"><i class="fas fa-search"></i></button>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID <i class="fas fa-sort"></i></th>
+                        <th>User <i class="fas fa-sort"></i></th>
+                        <th>Email <i class="fas fa-sort"></i></th>
+                        <th>Age <i class="fas fa-sort"></i></th>
+                        <th>Status <i class="fas fa-sort"></i></th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- YOUR EXACT DJANGO TEMPLATE LOGIC - UNCHANGED -->
+                    {% for user in data %}
+                    <tr>
+                        <td>{{ user.id }}</td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <!-- Avatar with first letter - using your exact style but with our themed class -->
+                                <div class="user-avatar">
+                                    {{ user.username|first|upper }}
+                                </div>
+                                <div>
+                                    <div style="font-weight: 500;">{{ user.username }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.age }}</td>
+                        <td>
+                            {% if user.status == 'APPROVED' %}
+                            <span class="status status-approved"><i class="fas fa-check-circle"></i> Approved</span>
+                            {% elif user.status == 'BLOCKED' %}
+                            <span class="status status-blocked"><i class="fas fa-ban"></i> Blocked</span>
+                            {% else %}
+                            <span class="status status-pending"><i class="fas fa-clock"></i> Pending</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <form method="POST" action="{% url 'approve_user'  %}" style="display:inline;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="id" value="{{ user.id }}">
+                                    <button type="submit" class="btn approve-btn btn-sm">
+                                        <i class="fas fa-check"></i> Approve
+                                    </button>
+                                </form>
+                                <form method="POST" action="{% url 'block_user' %}" style="display:inline;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="id" value="{{ user.id }}">
+                                    <button type="submit" class="btn block-btn btn-sm">
+                                        <i class="fas fa-ban"></i> Block
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <!-- Note: you had two closing </table> tags, keeping both to match your exact structure -->
+            </table>
+        </div>
+
+        <div class="pagination">
+            <a href="#"><i class="fas fa-chevron-left"></i></a>
+            <a href="#" class="active">1</a>
+            <a href="#">2</a>
+            <a href="#">3</a>
+            <a href="#"><i class="fas fa-chevron-right"></i></a>
+        </div>
+    </div>
+</body>
+</html>

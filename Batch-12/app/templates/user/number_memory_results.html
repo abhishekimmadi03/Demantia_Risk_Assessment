@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Number Memory Results</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>Your Number Memory Test Results</h1>
+    <a href="{% url 'start_number_memory_test' %}">Take New Test</a>
+    <table>
+        <tr>
+            <th>Date</th>
+            <th>Correct Clicks</th>
+            <th>Mistakes</th>
+            <th>Score</th>
+            <th>Time (seconds)</th>
+        </tr>
+        {% for r in results %}
+        <tr>
+            <td>{{ r.date_attempted|date:"Y-m-d H:i" }}</td>
+            <td>{{ r.correct_clicks }}/9</td>
+            <td>{{ r.mistakes }}</td>
+            <td>{{ r.score }}</td>
+            <td>{{ r.time_taken }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4">No results yet.</td></tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

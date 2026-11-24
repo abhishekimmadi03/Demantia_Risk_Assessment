@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number Sequencing · Admin Config</title>
+    <!-- Font Awesome 6 (free) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background: #0b1c26;  /* richer dark background */
+            color: #e5f0f5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ========== HORIZONTAL NAVBAR (admin version, matches profile/dashboard style) ========== */
+        .navbar {
+            background: rgba(7, 25, 33, 0.97);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid #2a5f6e;
+            padding: 0 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 15px 25px -12px #000000cc;
+            flex-wrap: wrap;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 0;
+        }
+
+        .brand-icon {
+            background: linear-gradient(150deg, #1e5668, #12343e);
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #d4af37;
+            box-shadow: 0 8px 12px -4px #00000050;
+        }
+        .brand-icon i {
+            font-size: 2rem;
+            color: #fae7a7;
+        }
+        .navbar-brand h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #f0e6c5;
+            letter-spacing: -0.02em;
+        }
+        .navbar-brand span {
+            font-size: 0.7rem;
+            color: #a5c9dd;
+            display: block;
+            line-height: 1.3;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex-wrap: wrap;
+            padding: 10px 0;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 18px;
+            color: #cee6f2;
+            text-decoration: none;
+            font-weight: 500;
+            border-radius: 40px;
+            transition: 0.18s ease;
+            white-space: nowrap;
+            font-size: 0.95rem;
+        }
+        .nav-item i {
+            font-size: 1.2rem;
+            color: #d4af37;
+            width: 24px;
+            transition: color 0.2s;
+        }
+        .nav-item:hover {
+            background: #1a4452;
+            color: white;
+        }
+        .nav-item.active {
+            background: #1d4f60;
+            color: white;
+            border-bottom: 2px solid #f1c40f;
+            border-radius: 40px 40px 0 0;
+            font-weight: 600;
+        }
+
+        .logout-item {
+            background: #244f5c;
+            margin-left: 8px;
+            border: none;
+            font-size: 0.95rem;
+        }
+        .logout-item:hover {
+            background: #874f4f;
+        }
+
+        /* ========== MAIN CONTAINER ========== */
+        .admin-container {
+            max-width: 1300px;
+            margin: 40px auto 60px;
+            padding: 0 30px;
+            width: 100%;
+        }
+
+        /* page header with icon */
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 35px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .page-header h1 {
+            font-size: 2.3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #f7e5b3, #ffd966);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .page-header h1 i {
+            color: #d4af37;
+            background: #1f404e;
+            padding: 12px;
+            border-radius: 50%;
+            font-size: 2rem;
+            box-shadow: 0 6px 10px #00000030;
+        }
+        .badge-info {
+            background: #173c47;
+            border: 1px solid #d4af37;
+            border-radius: 60px;
+            padding: 8px 25px;
+            color: #f3dd9e;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* card glassmorphism */
+        .glass-card {
+            background: rgba(18, 40, 50, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid #3d7382;
+            border-radius: 36px;
+            padding: 30px 35px;
+            margin-bottom: 40px;
+            box-shadow: 0 25px 40px -15px #030a0e;
+            transition: border 0.2s;
+        }
+        .glass-card:hover {
+            border-color: #d4af37;
+        }
+
+        .card-title {
+            font-size: 1.7rem;
+            font-weight: 600;
+            color: #ffe3a4;
+            margin-bottom: 25px;
+            border-left: 6px solid #d4af37;
+            padding-left: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .card-title i {
+            color: #d4af37;
+        }
+
+        /* preset buttons */
+        .preset-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+            background: #12313d;
+            padding: 15px 20px;
+            border-radius: 50px;
+        }
+        .preset-label {
+            color: #b8d6e5;
+            font-weight: 500;
+            margin-right: 5px;
+        }
+        .preset-btn {
+            background: #1b4452;
+            border: 1px solid #3d7382;
+            color: #e2f0f7;
+            padding: 10px 24px;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+        .preset-btn:hover {
+            background: #2c6377;
+            border-color: #d4af37;
+        }
+        .preset-btn.active {
+            background: #d4af37;
+            color: #0f212e;
+            border-color: #d4af37;
+            font-weight: 600;
+        }
+
+        /* form styling */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px 30px;
+            margin-top: 10px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .form-group label {
+            color: #d4af37;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .form-group label i {
+            color: #d4af37;
+            width: 20px;
+        }
+        input, select {
+            background: #0a2b35;
+            border: 1px solid #3d7382;
+            border-radius: 40px;
+            padding: 14px 22px;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.2s;
+        }
+        input:focus, select:focus {
+            border-color: #d4af37;
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+        }
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+        input[type="number"]::-webkit-inner-spin-button {
+            opacity: 0.5;
+        }
+
+        /* range info */
+        .range-info {
+            grid-column: span 2;
+            background: #0e2d39;
+            border-radius: 30px;
+            padding: 18px 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+            border: 1px solid #4f8295;
+            margin-top: 10px;
+        }
+        .range-detail {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .range-badge {
+            background: #1e4d5b;
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            border: 1px solid #d4af37;
+        }
+        .range-status {
+            font-weight: 600;
+        }
+        .status-valid { color: #4cafaf; }
+        .status-invalid { color: #f77f6e; }
+
+        .btn {
+            background: #d4af37;
+            border: none;
+            color: #0f212e;
+            padding: 14px 32px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            justify-content: center;
+            border: 1px solid transparent;
+        }
+        .btn:hover {
+            background: #edc851;
+            transform: scale(1.02);
+            border-color: #a58533;
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        .btn-block {
+            width: 100%;
+        }
+
+        /* quick create cards */
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 25px;
+            margin-top: 10px;
+        }
+        .quick-card {
+            background: linear-gradient(145deg, #1b4350, #0f303b);
+            border: 1px solid #3f798c;
+            border-radius: 28px;
+            padding: 24px;
+            transition: 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+        .quick-card:hover {
+            border-color: #d4af37;
+            transform: translateY(-4px);
+        }
+        .quick-card h3 {
+            color: #ffe3a4;
+            font-size: 1.4rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .quick-card p {
+            color: #c0dae7;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+        .quick-card .btn-small {
+            background: #d4af37;
+            border: none;
+            color: #0f212e;
+            padding: 12px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: auto;
+            border: 1px solid transparent;
+        }
+        .quick-card .btn-small:hover {
+            background: #ffe084;
+        }
+
+        /* table */
+        .table-wrapper {
+            overflow-x: auto;
+            margin-top: 20px;
+            border-radius: 30px;
+            background: rgba(0,0,0,0.2);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+        th {
+            text-align: left;
+            padding: 18px 15px;
+            color: #d4af37;
+            border-bottom: 2px solid #3d7382;
+            font-weight: 600;
+        }
+        td {
+            padding: 16px 15px;
+            border-bottom: 1px solid #2a4d5a;
+            color: #d6ecf5;
+        }
+        .badge {
+            background: #1f6a5c;
+            padding: 5px 16px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #caf0e0;
+        }
+        .badge.inactive {
+            background: #7a4a4a;
+            color: #ffd9d9;
+        }
+
+        .back-link {
+            margin-top: 30px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: #d4af37;
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+        .back-link:hover {
+            color: #f1c40f;
+            gap: 15px;
+        }
+
+        /* responsive */
+        @media (max-width: 850px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .range-info { grid-column: span 1; }
+            .navbar { padding: 0 20px; }
+        }
+        @media (max-width: 600px) {
+            .admin-container { padding: 0 20px; }
+            .glass-card { padding: 25px 20px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- admin navbar (active on number sequencing) -->
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <div class="brand-icon">
+                <i class="fas fa-clipboard-list"></i>
+            </div>
+            <div>
+                <h2>ScreeningSystem AI</h2>
+                <span>admin dashboard</span>
+            </div>
+        </div>
+
+        <div class="nav-links">
+            <a href="/admin_dashboard" class="nav-item">
+                <i class="fas fa-chart-pie"></i> Dashboard
+            </a>
+            <a href="/add_users" class="nav-item">
+                <i class="fas fa-user-plus"></i> Add Users
+            </a>
+            <a href="/manage_user" class="nav-item">
+                <i class="fas fa-user-friends"></i> Manage Users
+            </a>
+            <a href="/word_recall" class="nav-item">
+                <i class="fas fa-brain"></i> Word Recall
+            </a>
+            <a href="/number_memory_config" class="nav-item active">
+                <i class="fas fa-sort-numeric-up-alt"></i> Number Seq.
+            </a>
+            <a href="/verbal_fluency" class="nav-item">
+                <i class="fas fa-microphone-alt"></i> Verbal Fluency
+            </a>
+            <a href="/test_scores" class="nav-item">
+                <i class="fas fa-file-medical-alt"></i> Risk & Reporting
+            </a>
+            <form action="{% url 'user_logout' %}" method="POST" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="nav-item logout-item" style="background: none; border: none; cursor: pointer;">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </form>
+        </div>
+    </nav>
+
+    <div class="admin-container">
+        <!-- page header -->
+        <div class="page-header">
+            <h1>
+                <i class="fas fa-sort-numeric-up-alt"></i> 
+                Number Sequence – Configuration
+            </h1>
+            <div class="badge-info">
+                <i class="fas fa-shield-alt"></i> admin panel
+            </div>
+        </div>
+
+        <!-- Manual config card with preset -->
+        <div class="glass-card">
+            <div class="card-title">
+                <i class="fas fa-sliders-h"></i> Create new test level manually
+            </div>
+
+            <!-- Difficulty presets styled -->
+            <div class="preset-wrapper">
+                <span class="preset-label"><i class="fas fa-bolt"></i> Quick presets:</span>
+                <button type="button" class="preset-btn" onclick="setPreset('easy')">Easy (3x3)</button>
+                <button type="button" class="preset-btn" onclick="setPreset('medium')">Medium (4x4)</button>
+                <button type="button" class="preset-btn" onclick="setPreset('hard')">Hard (5x5)</button>
+            </div>
+
+            <form method="post" id="configForm">
+                {% csrf_token %}
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label><i class="fas fa-tag"></i> Configuration name</label>
+                        <input type="text" name="name" id="configName" placeholder="e.g., Beginner 3x3" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-layer-group"></i> Difficulty</label>
+                        <select name="difficulty" id="difficulty" onchange="updateGridSize()">
+                            <option value="easy">Easy</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="hard">Hard</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-border-all"></i> Grid size (n x n)</label>
+                        <input type="number" name="grid_size" id="gridSize" min="2" max="5" value="3" required onchange="updateNumberRange()">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-arrow-left"></i> Range start</label>
+                        <input type="number" name="number_range_start" id="rangeStart" value="1" required onchange="validateRange()">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-arrow-right"></i> Range end</label>
+                        <input type="number" name="number_range_end" id="rangeEnd" value="9" required onchange="validateRange()">
+                    </div>
+
+                    <!-- dynamic range info (spans both columns) -->
+                    <div class="range-info">
+                        <div class="range-detail">
+                            <span class="range-badge"><i class="fas fa-calculator"></i> current <span id="currentRange">1–9</span></span>
+                            <span><i class="fas fa-check-circle" style="color: #d4af37;"></i> required: <strong id="requiredCount">9</strong> numbers</span>
+                        </div>
+                        <div class="range-status" id="rangeStatusContainer">
+                            <span id="rangeStatusText" class="status-valid">✓ valid range</span>
+                        </div>
+                    </div>
+                </div> <!-- end form-grid -->
+
+                <button type="submit" class="btn" id="submitBtn" style="margin-top: 20px;">
+                    <i class="fas fa-save"></i> Create configuration
+                </button>
+                <small style="display: block; margin-top: 12px; color: #b0d0df;" id="rangeHint">
+                    <i class="fas fa-info-circle"></i> Range must contain exactly grid_size² numbers.
+                </small>
+            </form>
+        </div>
+
+        <!-- Quick create age-based tests (enhanced) -->
+        <div class="glass-card">
+            <div class="card-title">
+                <i class="fas fa-bolt"></i> Quick age‑based test generation
+            </div>
+            <div class="quick-grid">
+                <!-- Seniors card -->
+                <div class="quick-card">
+                    <h3><i class="fas fa-user-plus"></i> Seniors (60+)</h3>
+                    <p>3x3 grid · numbers 1–9 · easy difficulty</p>
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="name" value="Seniors 3x3">
+                        <input type="hidden" name="difficulty" value="easy">
+                        <input type="hidden" name="grid_size" value="3">
+                        <input type="hidden" name="number_range_start" value="1">
+                        <input type="hidden" name="number_range_end" value="9">
+                        <button type="submit" class="btn-small"><i class="fas fa-plus-circle"></i> create senior test</button>
+                    </form>
+                </div>
+                <!-- Adults card -->
+                <div class="quick-card">
+                    <h3><i class="fas fa-user-tie"></i> Adults (30–60)</h3>
+                    <p>4x4 grid · numbers 1–16 · medium</p>
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="name" value="Adults 4x4">
+                        <input type="hidden" name="difficulty" value="medium">
+                        <input type="hidden" name="grid_size" value="4">
+                        <input type="hidden" name="number_range_start" value="1">
+                        <input type="hidden" name="number_range_end" value="16">
+                        <button type="submit" class="btn-small"><i class="fas fa-plus-circle"></i> create adult test</button>
+                    </form>
+                </div>
+                <!-- Young adults card -->
+                <div class="quick-card">
+                    <h3><i class="fas fa-user-graduate"></i> Young (<30)</h3>
+                    <p>5x5 grid · numbers 1–25 · hard</p>
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="name" value="Young Adults 5x5">
+                        <input type="hidden" name="difficulty" value="hard">
+                        <input type="hidden" name="grid_size" value="5">
+                        <input type="hidden" name="number_range_start" value="1">
+                        <input type="hidden" name="number_range_end" value="25">
+                        <button type="submit" class="btn-small"><i class="fas fa-plus-circle"></i> create young test</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Existing configurations table -->
+        <div class="glass-card">
+            <div class="card-title">
+                <i class="fas fa-list-ul"></i> Existing test levels
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Difficulty</th>
+                            <th>Grid</th>
+                            <th>Range</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for config in configs %}
+                        <tr>
+                            <td>{{ config.name }}</td>
+                            <td>{{ config.get_difficulty_display }}</td>
+                            <td>{{ config.grid_size }}x{{ config.grid_size }}</td>
+                            <td>{{ config.number_range_start }} – {{ config.number_range_end }}</td>
+                            <td>
+                                {% if config.is_active %}
+                                <span class="badge"><i class="fas fa-check-circle"></i> Active</span>
+                                {% else %}
+                                <span class="badge inactive"><i class="fas fa-ban"></i> Inactive</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" style="text-align: center; padding: 40px; color: #b0d0df;">
+                                <i class="fas fa-database" style="font-size: 2rem; opacity: 0.5;"></i><br>No configurations yet.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- back to dashboard link -->
+        <a href="{% url 'admin_dashboard' %}" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <script>
+        // Sync grid size & range based on difficulty
+        function updateGridSize() {
+            const difficulty = document.getElementById('difficulty').value;
+            const gridSizeInput = document.getElementById('gridSize');
+            const configNameInput = document.getElementById('configName');
+            
+            let gridSize, start, end, name;
+            
+            switch(difficulty) {
+                case 'easy':
+                    gridSize = 3;
+                    start = 1;
+                    end = 9;
+                    name = 'Easy 3x3';
+                    break;
+                case 'medium':
+                    gridSize = 4;
+                    start = 1;
+                    end = 16;
+                    name = 'Medium 4x4';
+                    break;
+                case 'hard':
+                    gridSize = 5;
+                    start = 1;
+                    end = 25;
+                    name = 'Hard 5x5';
+                    break;
+            }
+            
+            gridSizeInput.value = gridSize;
+            document.getElementById('rangeStart').value = start;
+            document.getElementById('rangeEnd').value = end;
+            configNameInput.value = name;
+            
+            updateNumberRange();
+            validateRange();
+        }
+
+        function updateNumberRange() {
+            const gridSize = parseInt(document.getElementById('gridSize').value) || 3;
+            const requiredCount = gridSize * gridSize;
+            
+            document.getElementById('requiredCount').textContent = requiredCount;
+            
+            // smart suggestion: if start=1, set end = requiredCount
+            const start = parseInt(document.getElementById('rangeStart').value) || 1;
+            if (start === 1) {
+                document.getElementById('rangeEnd').value = requiredCount;
+            }
+            
+            validateRange();
+        }
+
+        function validateRange() {
+            const gridSize = parseInt(document.getElementById('gridSize').value) || 3;
+            const required = gridSize * gridSize;
+            
+            const start = parseInt(document.getElementById('rangeStart').value) || 0;
+            const end = parseInt(document.getElementById('rangeEnd').value) || 0;
+            const current = end - start + 1;
+            
+            // update current display
+            document.getElementById('currentRange').innerText = start + '–' + end;
+            
+            const statusEl = document.getElementById('rangeStatusText');
+            const submitBtn = document.getElementById('submitBtn');
+            const hintEl = document.getElementById('rangeHint');
+            
+            if (current === required && start <= end && start > 0) {
+                statusEl.innerHTML = '✓ valid range';
+                statusEl.className = 'status-valid';
+                submitBtn.disabled = false;
+                hintEl.innerHTML = '<i class="fas fa-check-circle"></i> Exactly ' + required + ' numbers. Ready to create.';
+            } else {
+                statusEl.innerHTML = '✗ invalid (has ' + current + ', need ' + required + ')';
+                statusEl.className = 'status-invalid';
+                submitBtn.disabled = true;
+                hintEl.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Must contain exactly ' + required + ' numbers (grid_size²). Currently has ' + current + '.';
+            }
+        }
+
+        // Preset setter with active class
+        function setPreset(level) {
+            document.getElementById('difficulty').value = level;
+            updateGridSize();
+
+            // toggle active class on preset buttons
+            document.querySelectorAll('.preset-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        // additional listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            updateGridSize(); // sets initial medium values
+
+            document.getElementById('rangeStart').addEventListener('input', validateRange);
+            document.getElementById('rangeEnd').addEventListener('input', validateRange);
+            document.getElementById('gridSize').addEventListener('input', function() {
+                updateNumberRange(); // includes validate
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScreeningSystem AI · User Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0f2a38;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Full-screen background image (softer, friendlier for users) */
+        .login-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://images.unsplash.com/photo-1506126613408-eca07ce68773?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
+            background-size: cover;
+            background-position: center 30%;
+            background-repeat: no-repeat;
+            filter: brightness(0.4) saturate(1.1);
+            z-index: 0;
+        }
+
+        /* warm gradient overlay for readability */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(70, 100, 120, 0.6) 0%, rgba(10, 30, 40, 0.85) 90%);
+            z-index: 1;
+        }
+
+        /* login card container */
+        .login-container {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 460px;
+            margin: 0 20px;
+        }
+
+        .login-card {
+            background: rgba(25, 45, 55, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            border-radius: 44px;
+            padding: 45px 40px 50px;
+            box-shadow: 0 35px 65px -15px rgba(0, 0, 0, 0.7);
+            transition: transform 0.3s ease;
+        }
+
+        .login-card:hover {
+            border-color: #d4af37;
+            box-shadow: 0 40px 70px -10px #000000cc;
+        }
+
+        /* brand / header */
+        .brand {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .brand-icon {
+            background: linear-gradient(145deg, #2f6b7a, #1d4b55);
+            width: 100px;
+            height: 100px;
+            border-radius: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            border: 1px solid #d4af37;
+            box-shadow: 0 0 25px #d4af37;
+            position: relative;
+        }
+
+        /* USER LOGO: friendly clipboard with heart / check (memory assessment for individuals) */
+        .logo-user {
+            font-size: 4.2rem;
+            background: linear-gradient(145deg, #f8d9a0, #ffeaa5);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            filter: drop-shadow(0 0 6px #f1c40f);
+        }
+
+        /* small badge = self assessment */
+        .user-badge {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            background: #f0a500;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            color: #0b1a2a;
+            border: 2px solid #1d4b55;
+        }
+
+        .brand h2 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            background: linear-gradient(145deg, #f5e6b8, #ffe3a4);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+            margin-bottom: 6px;
+        }
+
+        .brand p {
+            color: #c4dde8;
+            font-size: 0.95rem;
+            opacity: 0.95;
+        }
+
+        /* form styling */
+        .input-group {
+            margin-bottom: 24px;
+        }
+
+        .input-group label {
+            display: block;
+            color: #e2f0f5;
+            font-weight: 500;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+            letter-spacing: 0.3px;
+        }
+
+        .input-field {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid #5f9ea0;
+            border-radius: 40px;
+            padding: 16px 22px;
+            font-size: 1rem;
+            color: white;
+            outline: none;
+            transition: all 0.25s;
+        }
+
+        .input-field:focus {
+            border-color: #f1c40f;
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 0 0 3px rgba(241, 196, 15, 0.2);
+        }
+
+        .input-field::placeholder {
+            color: #aac3cf;
+            font-weight: 300;
+            font-size: 0.95rem;
+        }
+
+        /* show/hide password toggle */
+        .password-wrapper {
+            position: relative;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aac3cf;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: color 0.2s;
+        }
+
+        .toggle-password:hover {
+            color: #f1c40f;
+        }
+
+        /* options row */
+        .login-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0 28px;
+            font-size: 0.9rem;
+        }
+
+        .remember {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #d4e6ed;
+        }
+
+        .remember input {
+            width: 18px;
+            height: 18px;
+            accent-color: #d4af37;
+            border-radius: 4px;
+        }
+
+        .forgot-link {
+            color: #f1c40f;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px dashed #5f9ea0;
+        }
+
+        .forgot-link:hover {
+            color: #ffe26e;
+            border-bottom-color: #ffe26e;
+        }
+
+        /* login button */
+        .login-btn {
+            width: 100%;
+            background: linear-gradient(145deg, #2b6c7a, #1b515e);
+            border: 1px solid #d4af37;
+            border-radius: 60px;
+            padding: 16px 25px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            box-shadow: 0 15px 25px -8px #000000;
+        }
+
+        .login-btn i {
+            font-size: 1.5rem;
+            color: #f5d76e;
+        }
+
+        .login-btn:hover {
+            background: #1f6575;
+            border-color: #f1c40f;
+            transform: scale(1.01);
+            box-shadow: 0 20px 30px -6px black;
+        }
+
+        /* redirect to admin login (optional) */
+        .admin-redirect {
+            text-align: center;
+            margin-top: 27px;
+            color: #bfdbe7;
+        }
+
+        .admin-redirect a {
+            color: #f5d76e;
+            text-decoration: none;
+            font-weight: 600;
+            border-bottom: 1px solid #5f9ea0;
+        }
+
+        .admin-redirect a:hover {
+            color: white;
+            border-bottom-color: #d4af37;
+        }
+
+        /* footer note */
+        .footer-note {
+            position: absolute;
+            bottom: 18px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: #b0cedc;
+            z-index: 2;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+
+        /* responsiveness */
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 35px 25px 40px;
+            }
+
+            .brand h2 {
+                font-size: 1.9rem;
+            }
+        }
+        .message-container {
+            list-style-type: none;
+            padding: 0;
+            margin-bottom: 20px;
+        }
+
+        /* Style for individual messages */
+        .message-container li {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        /* Success message */
+        .message-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        /* Error message */
+        .message-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Warning message */
+        .message-warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="login-bg"></div>
+    <div class="overlay"></div>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="brand">
+                <div class="brand-icon">
+                    <i class="fas fa-clipboard" style="font-size: 2.5rem; color: bisque;"></i>
+                    <div class="user-badge">
+                        <i class="fas fa-check" style="font-size: 0.8rem;"></i>
+                    </div>
+                </div>
+                <h2>User Login</h2>
+                <p>Self‑assessment · Memory tracking</p>
+            </div>
+            {% if messages %}
+            <ul class="message-container">
+                {% for message in messages %}
+                    <li class="message-{{ message.tags }}">
+                        {{ message }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    
+    
+            <form method="POST">
+                {% csrf_token %}
+                <div class="input-group">
+                    <label for="username"><i class="fas fa-user" style="margin-right: 8px; color: #d4af37;"></i>Email or Username</label>
+                    <input type="text" id="username" name="username" class="input-field" placeholder="your@email.com" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="password"><i class="fas fa-lock" style="margin-right: 8px; color: #d4af37;"></i>Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="password" name="password" class="input-field" placeholder="··········" required>
+                        <i class="fas fa-eye toggle-password" id="togglePassword" onclick="togglePasswordVisibility()"></i>
+                    </div>
+                </div>
+
+                <div class="login-options">
+                    <label class="remember">
+                        <input type="checkbox" checked> <span>Keep me signed in</span>
+                    </label>
+                    <a href="#" class="forgot-link">forgot password?</a>
+                </div>
+
+                <button type="submit" class="login-btn">
+                    <i class="fas fa-arrow-right-to-bracket"></i> Login
+                </button>
+
+                <div class="admin-redirect">
+                     Create an account? <a href="/user_signup">User Signup</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="footer-note">
+        <i class="fas fa-heart" style="margin-right: 6px; color: #f0a500;"></i> confidential · memory self-assessment
+    </div>
+</body>
+</html>

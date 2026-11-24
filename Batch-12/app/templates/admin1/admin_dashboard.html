@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Age-Based Question - ScreeningSystem AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background: #0f212e;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: #e5f0f5;
+        }
+
+        /* ========== HORIZONTAL NAVBAR (identical to dashboard) ========== */
+        .navbar {
+            background: rgba(10, 30, 40, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid #2a5f6e;
+            padding: 0 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 10px 20px -10px #00000080;
+            flex-wrap: wrap;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px 0;
+        }
+
+        .brand-icon {
+            background: linear-gradient(145deg, #2f6b7a, #1d4b55);
+            width: 45px;
+            height: 45px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #d4af37;
+        }
+        .brand-icon i {
+            font-size: 2rem;
+            color: #ffeaa5;
+        }
+        .navbar-brand h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #f0e6c5;
+        }
+        .navbar-brand span {
+            font-size: 0.75rem;
+            color: #b0cedc;
+            display: block;
+        }
+
+        /* horizontal nav links */
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            flex-wrap: wrap;
+            padding: 10px 0;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 18px;
+            color: #c4dee8;
+            text-decoration: none;
+            font-weight: 500;
+            border-radius: 40px;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+        .nav-item i {
+            font-size: 1.2rem;
+            color: #d4af37;
+            width: 22px;
+        }
+        .nav-item:hover {
+            background: #1a4050;
+            color: white;
+        }
+        .nav-item.active {
+            background: #1a4a5a;
+            color: white;
+            border-bottom: 2px solid #f1c40f;
+            border-radius: 40px 40px 0 0;
+        }
+
+        .logout-item {
+            background: #2a4d5a;
+            margin-left: 10px;
+        }
+        .logout-item:hover {
+            background: #7a4a4a;
+        }
+
+        /* ========== MAIN CONTENT ========== */
+        .main-content {
+            padding: 40px 35px;
+            max-width: 1500px;
+            margin: 0 auto;
+            width: 100%;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Header Section */
+        .page-header {
+            background: linear-gradient(145deg, #1d4050, #14323f);
+            border-radius: 30px;
+            padding: 30px 35px;
+            margin-bottom: 30px;
+            border: 1px solid #3d7382;
+            box-shadow: 0 20px 30px -10px #000000;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .header-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(145deg, #2b6c7a, #1b515e);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #d4af37;
+        }
+
+        .header-icon i {
+            font-size: 2.5rem;
+            color: #f5d76e;
+        }
+
+        .header-text h1 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            background: linear-gradient(145deg, #f5e6b8, #ffe3a4);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header-text p {
+            color: #b8d6e5;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-text p i {
+            color: #d4af37;
+        }
+
+        .admin-badge {
+            background: #1d4b55;
+            padding: 12px 25px;
+            border-radius: 40px;
+            border: 1px solid #d4af37;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* date filter */
+        .date-filter {
+            display: flex;
+            gap: 10px;
+            background: rgba(25, 45, 55, 0.7);
+            padding: 5px;
+            border-radius: 40px;
+            border: 1px solid #3d7382;
+        }
+        .date-filter span {
+            padding: 8px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .date-filter span.active {
+            background: #d4af37;
+            color: #0f212e;
+            font-weight: 600;
+        }
+        .date-filter span:hover {
+            background: #1a4a5a;
+        }
+
+        /* stats grid with improved cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 22px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: rgba(25, 45, 55, 0.7);
+            backdrop-filter: blur(6px);
+            border: 1px solid #3d7382;
+            border-radius: 28px;
+            padding: 25px;
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: #d4af37;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: #d4af37;
+            box-shadow: 0 15px 30px -10px #000000;
+        }
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .stat-icon {
+            font-size: 2.5rem;
+            color: #d4af37;
+            background: #1d4b55;
+            width: 60px;
+            height: 60px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .stat-trend {
+            background: #2d5a4a;
+            color: #c3e6b5;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .stat-trend.down {
+            background: #7a4a4a;
+            color: #ffc9c9;
+        }
+        .stat-info h3 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        .stat-info p {
+            color: #b8d6e5;
+            font-size: 0.95rem;
+        }
+
+        /* charts row - enhanced */
+        .charts-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        .chart-card {
+            background: rgba(25, 45, 55, 0.7);
+            backdrop-filter: blur(6px);
+            border: 1px solid #3d7382;
+            border-radius: 32px;
+            padding: 25px;
+        }
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .chart-header h3 {
+            font-weight: 500;
+            color: #ffe3a4;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .chart-legend {
+            display: flex;
+            gap: 15px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.85rem;
+        }
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 4px;
+        }
+        .chart-canvas {
+            width: 100%;
+            height: 250px;
+            position: relative;
+        }
+
+        /* metrics row - new */
+        .metrics-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        .metric-card {
+            background: rgba(25, 45, 55, 0.7);
+            backdrop-filter: blur(6px);
+            border: 1px solid #3d7382;
+            border-radius: 28px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .metric-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 16px;
+            background: #1d4b55;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: #d4af37;
+        }
+        .metric-content {
+            flex: 1;
+        }
+        .metric-content h4 {
+            font-size: 0.9rem;
+            color: #b8d6e5;
+            margin-bottom: 5px;
+        }
+        .metric-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #ffe3a4;
+        }
+        .metric-trend {
+            font-size: 0.85rem;
+            color: #c3e6b5;
+        }
+
+        /* table section enhanced */
+        .table-section {
+            background: rgba(25, 45, 55, 0.7);
+            backdrop-filter: blur(6px);
+            border: 1px solid #3d7382;
+            border-radius: 32px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .table-header h3 {
+            color: #ffe3a4;
+            font-size: 1.4rem;
+        }
+        .table-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #d4af37;
+            color: #d4af37;
+            padding: 8px 18px;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-outline:hover {
+            background: #d4af37;
+            color: #0f212e;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            text-align: left;
+            padding: 16px 10px;
+            color: #d4af37;
+            font-weight: 600;
+            border-bottom: 2px solid #3d7382;
+        }
+        td {
+            padding: 14px 10px;
+            border-bottom: 1px solid #2a4d5a;
+        }
+        .user-cell {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #2f6b7a, #1d4b55);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            border: 2px solid #d4af37;
+        }
+        .risk-badge {
+            background: #2d5a4a;
+            padding: 5px 12px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            color: #c3e6b5;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .risk-badge.high {
+            background: #7a4a4a;
+            color: #ffc9c9;
+        }
+        .risk-badge.medium {
+            background: #9f8a4a;
+            color: #f8e6b5;
+        }
+
+        /* insight cards enhanced */
+        .insight-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+        }
+        .insight-card {
+            background: linear-gradient(145deg, #1d4050, #15303d);
+            border-radius: 28px;
+            padding: 25px;
+            border-left: 6px solid #d4af37;
+            transition: 0.3s;
+        }
+        .insight-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px -10px #000;
+        }
+        .insight-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .insight-header i {
+            font-size: 2.2rem;
+            color: #d4af37;
+        }
+        .insight-header span {
+            background: #1d4b55;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+        }
+        .insight-card h4 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+        .insight-card p {
+            color: #b8d6e5;
+            margin-bottom: 15px;
+        }
+        .insight-progress {
+            height: 6px;
+            background: #2a4d5a;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        .insight-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #d4af37, #f1c40f);
+            border-radius: 10px;
+        }
+
+        @media (max-width: 1200px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .metrics-row { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 900px) {
+            .charts-row { grid-template-columns: 1fr; }
+            .insight-grid { grid-template-columns: 1fr; }
+            .navbar { flex-direction: column; align-items: flex-start; }
+            .nav-links { width: 100%; overflow-x: auto; }
+            .metrics-row { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 20px 15px;
+            }
+            
+            .page-header {
+                padding: 20px;
+            }
+            
+            .header-icon {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .header-icon i {
+                font-size: 1.8rem;
+            }
+            
+            .header-text h1 {
+                font-size: 1.8rem;
+            }
+            
+            .form-card {
+                padding: 25px;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .submit-btn, .reset-btn {
+                width: 100%;
+            }
+            
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .nav-links {
+                width: 100%;
+                overflow-x: auto;
+                padding-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <div class="brand-icon">
+                <i class="fas fa-clipboard-list" style="font-size: 2.0rem; color: bisque;"></i>
+            </div>
+            <div>
+                <h2>ScreeningSystem AI</h2>
+                <span>admin dashboard</span>
+            </div>
+        </div>
+
+        <div class="nav-links">
+            <a href="/admin_dashboard" class="nav-item active">
+                <i class="fas fa-chart-pie"></i> Dashboard
+            </a>
+            <a href="/add_users" class="nav-item">
+                <i class="fas fa-user-plus"></i> Add Users
+            </a>
+            <a href="/manage_user" class="nav-item">
+                <i class="fas fa-user-friends"></i> Manage Users
+            </a>
+            <a href="/word_recall" class="nav-item">
+                <i class="fas fa-brain"></i> Word Recall
+            </a>
+            <a href="/number_memory_config" class="nav-item">
+                <i class="fas fa-sort-numeric-up-alt"></i> Number Sequencing
+            </a>
+            <a href="/verbal_fluency" class="nav-item">
+                <i class="fas fa-microphone-alt"></i> Verbal Fluency
+            </a>
+            <a href="/test_scores" class="nav-item">
+                <i class="fas fa-file-medical-alt"></i> Risk & Reporting
+            </a>
+            <form action="{% url 'user_logout' %}" method="POST" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="nav-item logout-item" style="background: none; border: none; cursor: pointer;">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </form>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="page-header">
+            <h1>Dashboard overview</h1>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon"><i class="fas fa-users"></i></div>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ user_count }}</h3>
+                    <p>Total Users</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon"><i class="fas fa-file-signature"></i></div>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ number_memory_count }}</h3>
+                    <p>Number Memory Tests</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon"><i class="fas fa-brain"></i></div>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ word_recall_count }}</h3>
+                    <p>Word Recall Tests</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon"><i class="fas fa-microphone-alt"></i></div>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ fluency_test_count }}</h3>
+                    <p>Fluency Tests</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- New metrics row -->
+        <div class="metrics-row">
+            <div class="metric-card">
+                <div class="metric-icon"><i class="fas fa-clock"></i></div>
+                <div class="metric-content">
+                    <h4>Avg. assessment time</h4>
+                    <div class="metric-value">8.2 min</div>
+                    <div class="metric-trend"><i class="fas fa-arrow-down"></i> 0.3 min faster</div>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon"><i class="fas fa-check-circle"></i></div>
+                <div class="metric-content">
+                    <h4>Completion rate</h4>
+                    <div class="metric-value">94%</div>
+                    <div class="metric-trend"><i class="fas fa-arrow-up"></i> +5% vs last month</div>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon"><i class="fas fa-chart-line"></i></div>
+                <div class="metric-content">
+                    <h4>Avg. risk score</h4>
+                    <div class="metric-value">23%</div>
+                    <div class="metric-trend"><i class="fas fa-arrow-down"></i> -2% improvement</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enhanced charts row -->
+        <div class="charts-row">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3><i class="fas fa-chart-pie" style="color: #d4af37;"></i> Risk level distribution</h3>
+                    <div class="chart-legend">
+                        <div class="legend-item"><span class="legend-color" style="background: #2e7d5e;"></span> Low</div>
+                        <div class="legend-item"><span class="legend-color" style="background: #c9a03d;"></span> Moderate</div>
+                        <div class="legend-item"><span class="legend-color" style="background: #b54e4e;"></span> High</div>
+                    </div>
+                </div>
+                <div class="chart-canvas">
+                    <canvas id="riskPieChart"></canvas>
+                </div>
+                <div style="text-align: center; margin-top: 15px; color: #b8d6e5;">
+                    <i class="fas fa-info-circle"></i> Based on 1,422 assessments
+                </div>
+            </div>
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3><i class="fas fa-chart-bar" style="color: #d4af37;"></i> Assessments trend</h3>
+                    <div class="chart-legend">
+                        <div class="legend-item"><span class="legend-color" style="background: #d4af37;"></span> 2025</div>
+                    </div>
+                </div>
+                <div class="chart-canvas">
+                    <canvas id="assessmentsBarChart"></canvas>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-top: 15px; color: #b8d6e5;">
+                    <span><i class="fas fa-arrow-up" style="color: #c3e6b5;"></i> +18% vs last period</span>
+                    <span>Projected: 450</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enhanced table section -->
+        <div class="table-section">
+            <div class="table-header">
+                <h3><i class="fas fa-clock"></i> Recent high-risk assessments</h3>
+                <div class="table-actions">
+                    <button class="btn-outline"><i class="fas fa-download"></i> Export</button>
+                    <button class="btn-outline"><i class="fas fa-filter"></i> Filter</button>
+                </div>
+            </div>
+            <table>
+                <thead>
+                    <tr><th>User</th><th>Test</th><th>Score</th><th>Risk</th><th>Date</th><th></th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><div class="user-cell"><div class="user-avatar">J</div> James K.</div></td>
+                        <td>Number sequencing</td>
+                        <td>4/10</td>
+                        <td><span class="risk-badge high"><i class="fas fa-exclamation-triangle"></i> high</span></td>
+                        <td>2025-03-04</td>
+                        <td><i class="fas fa-chevron-right" style="color: #d4af37;"></i></td>
+                    </tr>
+                    <tr>
+                        <td><div class="user-cell"><div class="user-avatar">W</div> Wei Z.</div></td>
+                        <td>Number sequencing</td>
+                        <td>3/10</td>
+                        <td><span class="risk-badge high"><i class="fas fa-exclamation-triangle"></i> high</span></td>
+                        <td>2025-03-02</td>
+                        <td><i class="fas fa-chevron-right" style="color: #d4af37;"></i></td>
+                    </tr>
+                    <tr>
+                        <td><div class="user-cell"><div class="user-avatar">M</div> Maria S.</div></td>
+                        <td>Word recall</td>
+                        <td>5/10</td>
+                        <td><span class="risk-badge medium"><i class="fas fa-clock"></i> moderate</span></td>
+                        <td>2025-03-02</td>
+                        <td><i class="fas fa-chevron-right" style="color: #d4af37;"></i></td>
+                    </tr>
+                    <tr>
+                        <td><div class="user-cell"><div class="user-avatar">P</div> Priya M.</div></td>
+                        <td>Verbal fluency</td>
+                        <td>6/10</td>
+                        <td><span class="risk-badge medium"><i class="fas fa-clock"></i> moderate</span></td>
+                        <td>2025-03-01</td>
+                        <td><i class="fas fa-chevron-right" style="color: #d4af37;"></i></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
+                <span style="background: #1d4b55; padding: 8px 18px; border-radius: 30px;">
+                    <i class="fas fa-robot"></i> AI detected 3 new high-risk patterns
+                </span>
+                <a href="/test_scores" style="color: #d4af37; text-decoration: none;">View all →</a>
+            </div>
+        </div>
+
+        <!-- Enhanced insight cards -->
+        <div class="insight-grid">
+            <div class="insight-card">
+                <div class="insight-header">
+                    <i class="fas fa-microphone"></i>
+                    <span>+15% vs last month</span>
+                </div>
+                <h4>Speech fluency</h4>
+                <p>82% completion rate · avg. score 7.4/10</p>
+                <div class="insight-progress">
+                    <div class="insight-progress-bar" style="width: 82%"></div>
+                </div>
+            </div>
+            <div class="insight-card">
+                <div class="insight-header">
+                    <i class="fas fa-list-ol"></i>
+                    <span>stable</span>
+                </div>
+                <h4>Number sequencing</h4>
+                <p>avg. score 6.2/10 · 342 attempts</p>
+                <div class="insight-progress">
+                    <div class="insight-progress-bar" style="width: 62%"></div>
+                </div>
+            </div>
+            <div class="insight-card">
+                <div class="insight-header">
+                    <i class="fas fa-brain"></i>
+                    <span>top performer</span>
+                </div>
+                <h4>Word recall</h4>
+                <p>avg. score 8.1/10 · 87% completion</p>
+                <div class="insight-progress">
+                    <div class="insight-progress-bar" style="width: 87%"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Risk pie chart
+            const pieCtx = document.getElementById('riskPieChart').getContext('2d');
+            new Chart(pieCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Low risk', 'Moderate', 'High risk'],
+                    datasets: [{
+                        data: [158, 67, 42],
+                        backgroundColor: ['#2e7d5e', '#c9a03d', '#b54e4e'],
+                        borderWidth: 0,
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '65%',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { backgroundColor: '#1d4b55' }
+                    }
+                }
+            });
+
+            // Bar chart
+            const barCtx = document.getElementById('assessmentsBarChart').getContext('2d');
+            new Chart(barCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'],
+                    datasets: [{
+                        label: 'assessments',
+                        data: [210, 250, 290, 340, 390, 420],
+                        borderColor: '#d4af37',
+                        backgroundColor: 'rgba(212, 175, 55, 0.1)',
+                        tension: 0.3,
+                        fill: true,
+                        pointBackgroundColor: '#d4af37',
+                        pointBorderColor: '#0f212e',
+                        pointRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { 
+                            beginAtZero: true, 
+                            grid: { color: '#2a4d5a' }, 
+                            ticks: { color: '#b8d6e5' } 
+                        },
+                        x: { ticks: { color: '#c4dee8' } }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

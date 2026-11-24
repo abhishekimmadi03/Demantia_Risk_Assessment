@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroCheck AI · Risk Report & Results</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: #0f212e;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: #e5f0f5;
+        }
+
+        /* ========== HORIZONTAL NAVBAR (user version) ========== */
+        .navbar {
+            background: rgba(10, 30, 40, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid #2a5f6e;
+            padding: 0 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 10px 20px -10px #00000080;
+            flex-wrap: wrap;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px 0;
+        }
+
+        .brand-icon {
+            background: linear-gradient(145deg, #2f6b7a, #1d4b55);
+            width: 45px;
+            height: 45px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #d4af37;
+        }
+        .brand-icon i {
+            font-size: 2rem;
+            color: #ffeaa5;
+        }
+        .navbar-brand h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #f0e6c5;
+        }
+        .navbar-brand span {
+            font-size: 0.75rem;
+            color: #b0cedc;
+            display: block;
+        }
+
+        /* horizontal nav links */
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            flex-wrap: wrap;
+            padding: 10px 0;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 18px;
+            color: #c4dee8;
+            text-decoration: none;
+            font-weight: 500;
+            border-radius: 40px;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+        .nav-item i {
+            font-size: 1.2rem;
+            color: #d4af37;
+            width: 22px;
+        }
+        .nav-item:hover {
+            background: #1a4050;
+            color: white;
+        }
+        .nav-item.active {
+            background: #1a4a5a;
+            color: white;
+            border-bottom: 2px solid #f1c40f;
+            border-radius: 40px 40px 0 0;
+        }
+
+        .logout-item {
+            background: #2a4d5a;
+            margin-left: 10px;
+        }
+        .logout-item:hover {
+            background: #7a4a4a;
+        }
+
+        /* ========== MAIN REPORT CONTENT ========== */
+        .main-content {
+            padding: 30px 35px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .page-header h1 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            background: linear-gradient(145deg, #f5e6b8, #ffe3a4);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-badge {
+            background: #1d4b55;
+            padding: 12px 25px;
+            border-radius: 40px;
+            border: 1px solid #d4af37;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* risk score highlight */
+        .risk-gauge {
+            background: linear-gradient(145deg, #1d4050, #15303d);
+            border: 1px solid #d4af37;
+            border-radius: 42px;
+            padding: 35px 40px;
+            margin: 30px 0 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+        .risk-text h2 {
+            font-size: 1.8rem;
+            color: #ffe3a4;
+            margin-bottom: 10px;
+        }
+        .risk-text p {
+            color: #b8d6e5;
+            max-width: 600px;
+            font-size: 1.1rem;
+            line-height: 1.5;
+        }
+        .risk-score {
+            text-align: center;
+        }
+        .risk-number {
+            font-size: 5rem;
+            font-weight: 800;
+            color: #d4af37;
+            line-height: 1;
+        }
+        .risk-label {
+            color: #b0cedc;
+            letter-spacing: 2px;
+        }
+
+        /* results grid (cards for each attempt) */
+        .section-title {
+            font-size: 1.8rem;
+            margin: 50px 0 25px;
+            color: #ffe3a4;
+            border-left: 6px solid #d4af37;
+            padding-left: 20px;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 25px;
+            margin-bottom: 45px;
+        }
+
+        .result-card {
+            background: rgba(25, 45, 55, 0.8);
+            backdrop-filter: blur(6px);
+            border: 1px solid #3d7382;
+            border-radius: 32px;
+            padding: 25px;
+            transition: 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        .result-card:hover {
+            border-color: #d4af37;
+            transform: translateY(-5px);
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .card-icon {
+            background: #1d4b55;
+            width: 55px;
+            height: 55px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: #d4af37;
+            border: 1px solid #d4af37;
+        }
+        .card-header h3 {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: #b8d6e5;
+        }
+        .card-header h3 strong {
+            display: block;
+            font-size: 1.5rem;
+            color: #f0e6c5;
+            margin-top: 5px;
+        }
+        .score-badge {
+            display: inline-block;
+            background: #2f6b7a;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: #f9e7b3;
+            border: 1px solid #d4af37;
+            margin: 15px 0 10px;
+        }
+        .recall-words {
+            background: #0f2933;
+            border-radius: 28px;
+            padding: 18px;
+            margin: 15px 0;
+            border: 1px dashed #3d8b9c;
+        }
+        .recall-words p {
+            color: #d4dce0;
+            font-size: 1.1rem;
+            word-break: break-word;
+        }
+        .meta-info {
+            display: flex;
+            gap: 15px;
+            color: #99b8c5;
+            font-size: 0.9rem;
+            border-top: 1px solid #2a5f6e;
+            padding-top: 15px;
+            margin-top: 10px;
+        }
+        .meta-info i {
+            color: #d4af37;
+            width: 20px;
+        }
+
+        .empty-state {
+            background: rgba(25, 45, 55, 0.5);
+            border-radius: 42px;
+            padding: 70px 30px;
+            text-align: center;
+            border: 2px dashed #3d7382;
+            margin: 40px 0;
+        }
+        .empty-state i {
+            font-size: 4rem;
+            color: #4a7a8a;
+            margin-bottom: 20px;
+        }
+        .empty-state p {
+            font-size: 1.5rem;
+            color: #b8d6e5;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: transparent;
+            border: 2px solid #d4af37;
+            color: #d4af37;
+            padding: 14px 32px;
+            border-radius: 60px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: 0.2s;
+            margin: 20px 0 30px;
+            font-size: 1.1rem;
+        }
+        .btn-back:hover {
+            background: #d4af37;
+            color: #0f212e;
+        }
+
+        @media (max-width: 700px) {
+            .main-content { padding: 20px 15px; }
+            .risk-gauge { flex-direction: column; text-align: center; }
+            .risk-number { font-size: 4rem; }
+        }
+    </style>
+</head>
+<body>
+<!-- MAIN REPORT AREA -->
+<div class="main-content">
+    <div class="page-header">
+        <h1><i class="fas fa-file-medical-alt" style="color: #d4af37;"></i> Your risk & recall report</h1>
+        <div class="user-badge">
+            <i class="fas fa-user"></i> <!-- you could inject username --> {{ request.user|default:"Participant" }}
+        </div>
+    </div>
+
+    <!-- ===== RISK GAUGE / LATEST SCORE ===== -->
+    {% if results %}
+        <!-- calculate a simple average for a mock risk score (or use latest) -->
+        {% with latest=results.0 %}
+        <div class="risk-gauge">
+            <div class="risk-text">
+                <h2><i class="fas fa-shield-alt"></i> Cognitive risk assessment</h2>
+                <p>Based on your latest word recall test from <strong>{{ latest.date_attempted }}</strong>. 
+                Scores below 6 may indicate mild cognitive decline. We recommend tracking your performance over time.</p>
+            </div>
+            <div class="risk-score">
+                <div class="risk-number">{{ latest.score }}/10</div>
+                <div class="risk-label">latest score</div>
+            </div>
+        </div>
+        {% endwith %}
+    {% endif %}
+
+    <!-- ===== RESULTS SECTION ===== -->
+    <h2 class="section-title"><i class="fas fa-history"></i> All word recall attempts</h2>
+
+    {% if results %}
+        <div class="results-grid">
+            {% for result in results %}
+            <div class="result-card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-pen"></i>
+                    </div>
+                    <h3>
+                        attempt #{{ forloop.revcounter }}   <!-- shows attempt number (reverse) -->
+                        <strong>{{ result.date_attempted }}</strong>
+                    </h3>
+                </div>
+
+                <!-- score big -->
+                <div class="score-badge">
+                    {{ result.score }} / 10
+                </div>
+
+                <!-- recalled words block -->
+                <div class="recall-words">
+                    <p><i class="fas fa-quote-left" style="color: #d4af37; opacity: 0.8;"></i> 
+                    {{ result.recalled_words|default:"— no words recorded —" }}
+                    <i class="fas fa-quote-right" style="color: #d4af37; opacity: 0.8;"></i></p>
+                </div>
+
+                <!-- meta: time taken & extra -->
+                <div class="meta-info">
+                    <span><i class="fas fa-hourglass-half"></i> {{ result.time_taken }} sec</span>
+                    <span><i class="fas fa-tag"></i> 
+                        {% if result.score >= 8 %} stable 
+                        {% elif result.score >= 5 %} mild 
+                        {% else %} attention 
+                        {% endif %}
+                    </span>
+                </div>
+
+                <!-- subtle risk tag based on score -->
+                {% if result.score < 5 %}
+                <div style="margin-top: 10px; background: #5e3a3a; border-radius: 30px; padding: 5px 15px; color: #ffbaba; display: inline-block; font-size: 0.8rem;">
+                    <i class="fas fa-exclamation-triangle"></i> below range
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- optional table view (condensed) for power users -->
+        <details style="margin: 35px 0; background: #1a3340; padding: 20px; border-radius: 32px; border: 1px solid #3d7382;">
+            <summary style="color: #d4af37; font-weight: 600; cursor: pointer; font-size: 1.1rem;">
+                <i class="fas fa-table"></i> View tabular format
+            </summary>
+            <table style="width: 100%; margin-top: 20px; border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <th style="text-align: left; padding: 12px 5px; color: #d4af37;">Date</th>
+                        <th style="text-align: left; padding: 12px 5px; color: #d4af37;">Score</th>
+                        <th style="text-align: left; padding: 12px 5px; color: #d4af37;">Time</th>
+                        <th style="text-align: left; padding: 12px 5px; color: #d4af37;">Recalled words</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for result in results %}
+                    <tr style="border-bottom: 1px solid #2a5f6e;">
+                        <td style="padding: 12px 5px;">{{ result.date_attempted }}</td>
+                        <td style="padding: 12px 5px;"><strong>{{ result.score }}</strong>/10</td>
+                        <td style="padding: 12px 5px;">{{ result.time_taken }}s</td>
+                        <td style="padding: 12px 5px; color: #b8d6e5;">{{ result.recalled_words|truncatechars:30 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </details>
+
+    {% else %}
+        <!-- empty state: no results -->
+        <div class="empty-state">
+            <i class="fas fa-clipboard-list"></i>
+            <p>No word recall results yet.</p>
+            <a href="{% url 'attempt_test' %}" class="btn-back" style="margin-top: 25px; display: inline-flex;">
+                <i class="fas fa-flask"></i> Attempt the test now
+            </a>
+        </div>
+    {% endif %}
+
+    <!-- back to test link (always visible) -->
+    <div style="text-align: center; margin: 40px 0 20px;">
+        <a href="{% url 'attempt_test' %}" class="btn-back">
+            <i class="fas fa-arrow-left"></i> Go back to word recall test
+        </a>
+        <a href="{% url 'user_dashboard' %}" class="btn-back" style="margin-left: 15px;">
+            <i class="fas fa-chart-pie"></i> Dashboard
+        </a>
+    </div>
+</div>
+
+<!-- optional small script to style the risk score (no real logic needed) -->
+</body>
+</html>
